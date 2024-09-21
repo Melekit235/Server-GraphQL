@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Клиент</title>
+    <script>
+        let socket;
+        let token;
+
+        async function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const result = await response.json();
+            if (result.token) {
+                token = result.token;
+                alert('Вход выполнен');
+                initWebSocket();
+            } else {
+                alert(result.error);
+            }
+        }
+
+        function initWebSocket() {
+            socket = new WebSocket(`ws://${window.location.host}`);
+            socket.onmessage = (event) => {
+                const message = document.createElement('div');
+                message.textContent = event.data;
+                document.getElementById('messages').appendChild(message);
+            };
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            socket.send(message);
+        }
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                headers: { 'Authorization': token },
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+
+        async function downloadFile() {
+            const filename = prompt('Введите имя файла для скачивания:');
+            const response = await fetch(`/download/${filename}`, {
+                headers: { 'Authorization': token }
+            });
+            if (response.status === 200) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                const result = await response.json();
+                alert(result.error);
+            }
+        }
+
+        async function deleteFile() {
+            const filename = prompt('Введите имя файла для удаления:');
+            const response = await fetch(`/delete/${filename}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': token }
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+        }
+    </script>
+</head>
+<body>
+    <h1>Клиент WebSocket</h1>
+
+    <div>
+        <input type="text" id="username" placeholder="Имя пользователя">
+        <input type="password" id="password" placeholder="Пароль">
+        <button onclick="register()">Регистрация</button>
+        <button onclick="login()">Вход</button>
+    </div>
+
+    <div>
+        <input type="file" id="file">
+        <button onclick="uploadFile()">Загрузить файл</button>
+        <button onclick="downloadFile()">Скачать файл</button>
+        <button onclick="deleteFile()">Удалить файл</button>
+    </div>
+
+    <div>
+        <input type="text" id="message" placeholder="Введите сообщение">
+        <button onclick="sendMessage()">Отправить сообщение</button>
+    </div>
+
+    <div id="messages"></div>
+</body>
+</html>

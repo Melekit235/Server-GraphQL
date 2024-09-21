@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Storage App</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">File Storage</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item" id="user-info" style="display: none;">
+          <span class="navbar-text mr-3" id="username-display"></span>
+          <button class="btn btn-outline-danger" id="logout-btn">Logout</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-5" id="auth-section">
+    <h2 class="mb-4" id="auth-title">Login</h2>
+    <form id="loginForm" style="display: block;">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <input type="text" class="form-control" id="login-username" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" class="form-control" id="login-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="button" class="btn btn-link" id="show-register-form">Need an account? Register here</button>
+    </form>
+
+    <form id="registerForm" style="display: none;">
+      <div class="form-group">
+        <label for="register-username">Username</label>
+        <input type="text" class="form-control" id="register-username" required>
+      </div>
+      <div class="form-group">
+        <label for="register-password">Password</label>
+        <input type="password" class="form-control" id="register-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Register</button>
+      <button type="button" class="btn btn-link" id="show-login-form">Already have an account? Login here</button>
+    </form>
+  </div>
+
+  <div class="container mt-5" id="file-section" style="display: none;">
+    <h2 class="mb-4">Upload Files</h2>
+    <form id="uploadForm">
+      <div class="form-group">
+        <input type="file" class="form-control-file" id="fileInput" required>
+      </div>
+      <button type="submit" class="btn btn-success">Upload</button>
+    </form>
+
+    <h3 class="mt-5">Uploaded Files</h3>
+    <ul class="list-group mt-3" id="fileList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
